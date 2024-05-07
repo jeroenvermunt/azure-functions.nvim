@@ -29,17 +29,25 @@ local function get_function_apps()
 		local split_values = {}
 
 		for value in string.gmatch(function_app, "[^%s]+") do
+			-- for value in string.gmatch(function_app, "%S+(?:%s%S+)*") do
 			table.insert(split_values, value)
 		end
 
 		local parsed_app = {
 			name = split_values[1],
-			location = split_values[2],
-			state = split_values[3],
-			resource_group = split_values[4],
-			default_host_name = split_values[5],
-			app_service_plan = split_values[6],
+			location = split_values[2] .. " " .. split_values[3],
+			state = split_values[4],
+			resource_group = split_values[5],
+			default_host_name = split_values[6],
+			app_service_plan = split_values[7],
 		}
+
+		-- print(parsed_app.name)
+		-- print(parsed_app.location)
+		-- print(parsed_app.state)
+		-- print(parsed_app.resource_group)
+		-- print(parsed_app.default_host_name)
+		-- print(parsed_app.app_service_plan)
 
 		table.insert(function_apps, parsed_app)
 	end
@@ -92,5 +100,7 @@ local function_app_picker = function(opts)
 end
 
 M.deploy_app = function_app_picker
+
+-- get_function_apps()
 
 return M
