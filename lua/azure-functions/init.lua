@@ -52,7 +52,7 @@ local construct_deployment_command = function(app_name, resource_group)
 	return "func azure functionapp publish " .. app_name .. " --resource-group " .. resource_group
 end
 
-local deploy_function_app = function(app_name, resource_group)
+local deploy_app = function(app_name, resource_group)
 	local deploy_command = construct_deployment_command(app_name, resource_group)
 	-- open a new terminal and run the command
 	vim.cmd.terminal()
@@ -79,7 +79,7 @@ local function_app_picker = function(opts)
 				actions.select_default:replace(function()
 					local selection = action_state.get_selected_entry()
 					actions.close(prompt_bufnr)
-					deploy_function_app(selection.value.name, selection.value.resource_group)
+					deploy_app(selection.value.name, selection.value.resource_group)
 				end)
 				return true
 			end,
@@ -91,6 +91,6 @@ local function_app_picker = function(opts)
 		:find()
 end
 
-M.deploy_function_app = deploy_function_app
+M.deploy_function_app = deploy_app
 
 return M
