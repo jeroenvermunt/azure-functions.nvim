@@ -100,6 +100,8 @@ local get_functions = function()
 	local function_cmd = 'find . -type f -name "function.json" -printf "%h\n" | sed \'s|^\\.||\''
 	local handle = io.popen(function_cmd)
 
+	print(handle)
+
 	if handle == nil then
 		return functions
 	end
@@ -178,5 +180,7 @@ M.deploy_app = function_app_picker
 M.start_app = endpoint_picker
 
 -- get_function_apps()
+
+endpoint_picker()
 
 return M
