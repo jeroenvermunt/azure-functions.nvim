@@ -182,8 +182,4 @@ end
 M.deploy_app = function_app_picker
 M.start_app = endpoint_picker
 
--- get_function_apps()
-
-endpoint_picker()
-
 return M
