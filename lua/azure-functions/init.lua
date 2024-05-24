@@ -98,6 +98,8 @@ end
 local get_functions = function()
 	local functions = {}
 	local function_cmd = 'find . -type f -name "function.json" -printf "%h\n" | sed \'s|^\\.||\''
+
+	print(function_cmd)
 	local handle = io.popen(function_cmd)
 
 	print(handle)
@@ -107,6 +109,7 @@ local get_functions = function()
 	end
 
 	functions = handle:read("*all")
+	print(functions)
 
 	return functions
 end
