@@ -67,6 +67,48 @@ local deploy_function_app = function(app_name, resource_group)
 	vim.api.nvim_chan_send(vim.b.terminal_job_id, deploy_command .. "\n")
 end
 
+local endpoint_picker = function(opts)
+	opts = opts or {}
+	pickers
+		.new(opts, {
+			prompt_title = "Endpoints",
+			finder = finders.new_table({
+				-- results = get_function_apps(),
+				entry_maker = function(entry)
+					return {
+						value = entry,
+						display = entry.default_host_name,
+						ordinal = entry.default_host_name,
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr, map)
+				actions.select_default:replace(function()
+					local selection = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					vim.cmd("func start --functions " .. selection.value.default_host_name)
+				end)
+				return true
+			end,
+		})
+		:find()
+end
+
+local get_functions = function()
+	local functions = {}
+	local function_cmd = 'find . -type f -name "function.json" -printf "%h\n" | sed \'s|^\\.||\''
+	local handle = io.popen(function_cmd)
+
+	if handle == nil then
+		return functions
+	end
+
+	functions = handle:read("*all")
+
+	return functions
+end
+
 local function_app_picker = function(opts)
 	opts = opts or {}
 	pickers
@@ -99,7 +141,41 @@ local function_app_picker = function(opts)
 		:find()
 end
 
+local start_function_app = function(app_name)
+	local start_command = "func start --functions " .. app_name
+	-- open a new terminal and run the command
+	vim.cmd.terminal()
+	vim.api.nvim_chan_send(vim.b.terminal_job_id, start_command .. "\n")
+end
+
+local endpoint_picker = function(opts)
+	opts = opts or {}
+	pickers
+		.new(opts, {
+			prompt_title = "Endpoints",
+			finder = finders.new_table({
+				results = get_functions(),
+				entry_maker = function(entry)
+					return {
+						value = entry,
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr, map)
+				actions.select_default:replace(function()
+					local selection = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					start_function_app(selection.value)
+				end)
+				return true
+			end,
+		})
+		:find()
+end
+
 M.deploy_app = function_app_picker
+M.start_app = endpoint_picker
 
 -- get_function_apps()
 
